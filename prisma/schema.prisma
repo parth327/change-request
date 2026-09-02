@@ -1,0 +1,98 @@
+// Prisma schema for the CLIMS Change Request approval system.
+// Datasource: Neon Postgres (set DATABASE_URL in your environment).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ApprovalMode {
+  SINGLE // any one recipient's decision finalizes the request
+  HIERARCHICAL // recipients decide in level order; all must approve
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ApprovalStatus {
+  PENDING // waiting, and not yet notified (hierarchical: earlier level not cleared)
+  NOTIFIED // email sent, awaiting this recipient's decision
+  APPROVED
+  REJECTED
+  SKIPPED // request was resolved by someone else / a rejection upstream
+}
+
+// A single global pool of recipients, reused by every request.
+// `level` only matters in HIERARCHICAL mode (1 = decides first).
+model Recipient {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  level     Int      @default(1)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  approvals RequestApproval[]
+
+  @@index([active, level])
+}
+
+model ChangeRequest {
+  id             String        @id @default(cuid())
+  refCode        String        @unique // human-friendly reference, e.g. CR-000123
+  submitterEmail String
+  changeDate     DateTime
+  description    String
+  reason         String?
+  status         RequestStatus @default(PENDING)
+  approvalMode   ApprovalMode // snapshot of the mode active at submission time
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  approvals RequestApproval[]
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+// One row per recipient assigned to a request, tracking their individual decision.
+model RequestApproval {
+  id          String         @id @default(cuid())
+  requestId   String
+  request     ChangeRequest  @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  recipientId String
+  recipient   Recipient      @relation(fields: [recipientId], references: [id])
+  level       Int // copied from Recipient.level at creation time
+  status      ApprovalStatus @default(PENDING)
+  comment     String?
+  token       String         @unique // secure random token used in the review link
+  notifiedAt  DateTime?
+  decidedAt   DateTime?
+  createdAt   DateTime       @default(now())
+
+  @@index([requestId])
+  @@index([token])
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  name         String?
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+// Single-row table holding the global approval mode toggle.
+model Settings {
+  id           Int          @id @default(1)
+  approvalMode ApprovalMode @default(SINGLE)
+  updatedAt    DateTime     @updatedAt
+}

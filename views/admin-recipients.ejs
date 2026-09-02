@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head', { title: 'Recipients · CLIMS Admin' }) %>
+  </head>
+  <body class="bg-bg text-ink font-sans antialiased min-h-screen">
+    <div class="min-h-screen flex flex-col">
+      <%- include('partials/admin-header', { active: 'recipients' }) %>
+
+      <div class="flex-1 max-w-5xl mx-auto w-full px-6 py-10">
+        <h1 class="text-2xl font-bold tracking-tight text-ink mb-2">Recipients</h1>
+        <p class="text-ink-muted text-[15px] mb-8 max-w-lg">
+          This pool of recipients is used for every request. Level only matters in hierarchical
+          approval mode — level 1 decides first.
+        </p>
+
+        <form id="add-form" class="panel p-6 mb-8 grid sm:grid-cols-[1fr_1fr_100px_auto] gap-4 items-end">
+          <div>
+            <label class="field-label" for="name"><%- icon('users', 'w-4 h-4 text-ink-muted') %> Name</label>
+            <input id="name" name="name" required class="text-input" />
+          </div>
+          <div>
+            <label class="field-label" for="rec-email"><%- icon('mail', 'w-4 h-4 text-ink-muted') %> Email</label>
+            <input id="rec-email" name="email" type="email" required class="text-input" />
+          </div>
+          <div>
+            <label class="field-label" for="level">Level</label>
+            <input id="level" name="level" type="number" min="1" max="50" value="1" class="text-input" />
+          </div>
+          <button type="submit" id="add-btn" class="btn-primary h-[42px]"><%- icon('plus', 'w-4 h-4') %> Add</button>
+          <div class="sm:col-span-4 hidden flex items-center gap-2 bg-danger-bg text-danger text-sm rounded-lg px-3 py-2.5" id="add-error">
+            <%- icon('alert-triangle', 'w-4 h-4 shrink-0') %><span id="add-error-text"></span>
+          </div>
+        </form>
+
+        <div class="panel overflow-hidden">
+          <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-line text-left text-ink-muted bg-bg/60">
+                <th class="px-4 py-3 font-medium">Name</th>
+                <th class="px-4 py-3 font-medium">Email</th>
+                <th class="px-4 py-3 font-medium">Level</th>
+                <th class="px-4 py-3 font-medium">Status</th>
+                <th class="px-4 py-3 font-medium"></th>
+              </tr>
+            </thead>
+            <tbody id="recipients-tbody">
+              <% if (recipients.length === 0) { %>
+              <tr>
+                <td colspan="5">
+                  <div class="empty-state">
+                    <span class="flex h-12 w-12 items-center justify-center rounded-full bg-bg text-ink-muted"><%- icon('users', 'w-6 h-6') %></span>
+                    <p class="text-ink-muted text-sm">No recipients yet. Add one above — you'll need at least one active recipient
+                    before requests can be submitted.</p>
+                  </div>
+                </td>
+              </tr>
+              <% } %> <% recipients.forEach(function(r) { %>
+              <tr class="table-row" data-row-id="<%= r.id %>">
+                <td class="px-4 py-3 text-ink font-medium"><%= r.name %></td>
+                <td class="px-4 py-3 text-ink"><%= r.email %></td>
+                <td class="px-4 py-3">
+                  <input
+                    type="number"
+                    min="1"
+                    max="50"
+                    value="<%= r.level %>"
+                    class="text-input w-16 py-1 level-input"
+                    data-id="<%= r.id %>"
+                  />
+                </td>
+                <td class="px-4 py-3">
+                  <span class="<%= r.active ? 'badge-approved' : 'badge-pending' %>"
+                    ><%- icon(r.active ? 'check-circle' : 'clock', 'w-3.5 h-3.5') %><%= r.active ? 'Active' : 'Inactive' %></span
+                  >
+                </td>
+                <td class="px-4 py-3 text-right">
+                  <button
+                    class="toggle-btn text-accent-ink text-sm hover:underline font-medium"
+                    data-id="<%= r.id %>"
+                    data-active="<%= r.active %>"
+                  >
+                    <%= r.active ? 'Deactivate' : 'Activate' %>
+                  </button>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="/js/admin.js" defer></script>
+    <script src="/js/admin-recipients.js" defer></script>
+  </body>
+</html>

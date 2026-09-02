@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  ::selection {
+    background: #f3e3d3;
+  }
+  :focus-visible {
+    outline: 2px solid #c1631a;
+    outline-offset: 2px;
+  }
+  body {
+    background-image: radial-gradient(120% 140% at 100% 0%, rgba(193, 99, 26, 0.05) 0%, rgba(193, 99, 26, 0) 55%);
+    background-attachment: fixed;
+  }
+}
+
+@layer components {
+  .panel {
+    @apply bg-surface border border-line rounded-xl shadow-card;
+  }
+
+  .panel-interactive {
+    @apply panel transition-all duration-200 hover:shadow-card-hover hover:-translate-y-0.5 hover:border-accent/40
+    disabled:opacity-60 disabled:pointer-events-none disabled:hover:translate-y-0;
+  }
+
+  .field-label {
+    @apply flex items-center gap-1.5 text-sm font-medium text-ink mb-1.5;
+  }
+
+  .field-hint {
+    @apply text-xs text-ink-muted mt-1;
+  }
+
+  .field-error {
+    @apply flex items-center gap-1 text-xs text-danger mt-1;
+  }
+
+  .text-input {
+    @apply w-full rounded-lg border border-line bg-surface px-3.5 py-2.5 text-[15px] text-ink placeholder:text-ink-muted/70
+    focus:border-accent focus:ring-4 focus:ring-accent/15 outline-none transition-all duration-150;
+  }
+
+  /* Base button color uses accent-ink, not accent: accent-ink gives ~8.6:1
+     contrast with white text (AAA); accent itself is only ~4.1:1, just under
+     the 4.5:1 AA threshold for normal-size text (14px semibold doesn't
+     qualify as "large text" under WCAG, so it needs the full 4.5:1). The
+     accent-gradient is reserved for hover, where a brief dip in contrast
+     during a transient state is fine — it must never be the resting state. */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-accent-ink px-5 py-2.5 text-sm font-semibold text-white
+    shadow-[0_1px_0_rgba(255,255,255,0.15)_inset,0_4px_14px_-4px_rgba(122,62,15,0.55)]
+    hover:bg-accent-gradient hover:shadow-glow hover:-translate-y-px active:translate-y-0 active:scale-[0.98] transition-all duration-150
+    disabled:opacity-50 disabled:pointer-events-none disabled:translate-y-0 disabled:shadow-none disabled:active:scale-100;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-line bg-surface px-5 py-2.5 text-sm font-medium text-ink
+    hover:bg-bg hover:border-ink/20 active:scale-[0.98] transition-all duration-150 disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-success {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-success px-5 py-2.5 text-sm font-semibold text-white
+    shadow-[0_4px_14px_-4px_rgba(32,107,69,0.5)] hover:opacity-90 hover:-translate-y-px active:scale-[0.98] transition-all duration-150
+    disabled:opacity-50 disabled:pointer-events-none disabled:translate-y-0 disabled:active:scale-100;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-danger px-5 py-2.5 text-sm font-semibold text-white
+    shadow-[0_4px_14px_-4px_rgba(156,43,43,0.5)] hover:opacity-90 hover:-translate-y-px active:scale-[0.98] transition-all duration-150
+    disabled:opacity-50 disabled:pointer-events-none disabled:translate-y-0 disabled:active:scale-100;
+  }
+
+  /* Diagonal light sweep on hover, reserved for the one or two primary CTAs
+     per page (the actual form-submitting button) — not applied broadly, so
+     it stays a highlight instead of visual noise. */
+  .btn-shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-shine::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.4) 48%, transparent 66%);
+    transform: translateX(-130%);
+  }
+  .btn-shine:hover::after {
+    transform: translateX(130%);
+    transition: transform 0.75s ease;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-ink-muted
+    hover:bg-bg hover:text-ink transition-colors duration-150 disabled:opacity-40 disabled:pointer-events-none;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium;
+  }
+
+  .badge-pending {
+    @apply badge bg-pending-bg text-pending;
+  }
+
+  .badge-approved {
+    @apply badge bg-success-bg text-success;
+  }
+
+  .badge-rejected {
+    @apply badge bg-danger-bg text-danger;
+  }
+
+  .stat-card {
+    @apply panel p-5 flex items-center gap-4;
+  }
+
+  .stat-icon {
+    @apply flex h-11 w-11 shrink-0 items-center justify-center rounded-lg;
+  }
+
+  .nav-pill {
+    @apply flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-150;
+  }
+
+  .spinner {
+    @apply h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white;
+  }
+
+  .empty-state {
+    @apply flex flex-col items-center justify-center gap-3 px-4 py-16 text-center;
+  }
+
+  .table-row {
+    @apply border-b border-line last:border-0 transition-colors duration-150 hover:bg-accent-soft/25;
+  }
+}

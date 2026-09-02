@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head', { title: `${request.refCode} · CLIMS` }) %>
+  </head>
+  <body class="bg-bg text-ink font-sans antialiased min-h-screen">
+    <main class="min-h-screen flex flex-col">
+      <%- include('partials/public-header') %>
+
+      <div class="flex-1 max-w-2xl mx-auto w-full px-6 py-12">
+        <div class="panel overflow-hidden animate-scale-in">
+          <div class="p-8 border-b border-dashed border-line <%= request.status === 'APPROVED' ? 'bg-success-bg/40' : request.status === 'REJECTED' ? 'bg-danger-bg/40' : 'bg-pending-bg/40' %>">
+            <span class="flex h-12 w-12 items-center justify-center rounded-full text-white mb-4 shadow-[0_4px_14px_-4px_rgba(27,36,48,0.4)] <%= request.status === 'APPROVED' ? 'bg-success' : request.status === 'REJECTED' ? 'bg-danger' : 'bg-pending' %>">
+              <%- icon(request.status === 'APPROVED' ? 'check-circle' : request.status === 'REJECTED' ? 'x-circle' : 'clock', 'w-6 h-6') %>
+            </span>
+            <p class="text-ink-muted text-sm mb-1">Request <%= request.status === 'PENDING' ? 'submitted' : request.status.toLowerCase() %></p>
+            <p class="text-3xl font-bold tracking-tight text-ink"><%= request.refCode %></p>
+          </div>
+          <div class="p-8 space-y-4">
+            <p class="text-[15px] text-ink-muted leading-relaxed">
+              <% if (request.status === 'PENDING') { %>
+              We've emailed a confirmation to <strong class="text-ink"><%= request.submitterEmail %></strong>
+              and routed this request for approval. You'll receive another email as soon as a
+              decision is made.
+              <% } else if (request.status === 'APPROVED') { %>
+              This request has been <strong class="text-success">approved</strong>. A confirmation was
+              emailed to <strong class="text-ink"><%= request.submitterEmail %></strong>.
+              <% } else { %>
+              This request has been <strong class="text-danger">rejected</strong>. Details were
+              emailed to <strong class="text-ink"><%= request.submitterEmail %></strong>.
+              <% } %>
+            </p>
+            <dl class="grid grid-cols-3 gap-y-3 text-sm pt-2 border-t border-line">
+              <dt class="text-ink-muted flex items-center gap-1.5 pt-3"><%- icon('calendar', 'w-4 h-4') %> Date of change</dt>
+              <dd class="col-span-2 text-ink pt-3"><%= formatDate(request.changeDate) %></dd>
+              <dt class="text-ink-muted flex items-center gap-1.5"><%- icon('clock', 'w-4 h-4') %> Status</dt>
+              <dd class="col-span-2"><%- include('partials/status-badge', { status: request.status }) %></dd>
+            </dl>
+          </div>
+          <% if (request.approvals && request.approvals.length > 0) { %>
+          <div class="px-8 pb-8">
+            <h2 class="text-sm font-semibold text-ink-muted mb-3 flex items-center gap-1.5"><%- icon('users', 'w-4 h-4') %> Approvers</h2>
+            <ul class="space-y-3">
+              <% request.approvals.forEach(function(a) { %>
+              <li class="flex items-center justify-between gap-2 bg-bg rounded-lg px-4 py-3">
+                <div class="min-w-0">
+                  <p class="text-ink text-sm font-medium truncate"><%= a.recipient.name %></p>
+                  <% if (a.decidedAt) { %>
+                  <p class="text-ink-muted text-xs">Decided <%= formatDateTime(a.decidedAt) %></p>
+                  <% } %>
+                </div>
+                <div class="shrink-0"><%- include('partials/status-badge', { status: a.status }) %></div>
+              </li>
+              <% }) %>
+            </ul>
+          </div>
+          <% } %>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 mt-6 text-sm">
+          <a href="/" class="inline-flex items-center gap-1.5 text-accent-ink hover:underline font-medium">
+            <%- icon('arrow-left', 'w-4 h-4') %> Submit another request
+          </a>
+          <a href="/track" class="inline-flex items-center gap-1.5 text-accent-ink hover:underline font-medium">
+            <%- icon('search', 'w-4 h-4') %> Track a different request
+          </a>
+        </div>
+        <p class="text-xs text-ink-muted mt-4 flex items-center gap-1.5"><%- icon('sparkle', 'w-3.5 h-3.5') %> Bookmark this page — it always shows this request's current status.</p>
+      </div>
+    </main>
+  </body>
+</html>

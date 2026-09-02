@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head', { title: 'Admin sign in · CLIMS' }) %>
+  </head>
+  <body class="bg-brand-gradient text-ink font-sans antialiased min-h-screen relative overflow-hidden">
+    <div class="absolute inset-0 bg-hero-glow pointer-events-none"></div>
+    <main class="min-h-screen flex items-center justify-center px-6 relative">
+      <div class="w-full max-w-sm animate-scale-in">
+        <div class="flex flex-col items-center mb-6">
+          <span class="flex h-12 w-12 items-center justify-center rounded-xl bg-accent-gradient shadow-glow mb-3">
+            <%- icon('shield-check', 'w-6 h-6 text-white') %>
+          </span>
+          <p class="text-bg text-sm font-medium">CLIMS &middot; Admin</p>
+        </div>
+        <form id="login-form" class="panel p-8 space-y-5" data-from="<%= from %>">
+          <h1 class="text-lg font-semibold text-ink">Sign in</h1>
+          <div>
+            <label class="field-label" for="email"><%- icon('mail', 'w-4 h-4 text-ink-muted') %> Email</label>
+            <input id="email" name="email" type="email" required class="text-input" autofocus />
+          </div>
+          <div>
+            <label class="field-label" for="password"><%- icon('lock', 'w-4 h-4 text-ink-muted') %> Password</label>
+            <input id="password" name="password" type="password" required class="text-input" />
+          </div>
+          <div class="hidden flex items-center gap-2 bg-danger-bg text-danger text-sm rounded-lg px-3 py-2.5" id="login-error" role="alert">
+            <%- icon('alert-triangle', 'w-4 h-4 shrink-0') %><span id="login-error-text"></span>
+          </div>
+          <button type="submit" id="login-btn" class="btn-primary btn-shine w-full"><span id="login-btn-text">Sign in</span></button>
+        </form>
+        <a href="/" class="mt-5 flex items-center justify-center gap-1.5 text-sm text-bg/65 hover:text-bg transition-colors">
+          <%- icon('home', 'w-4 h-4') %> Back to main site
+        </a>
+      </div>
+    </main>
+    <script src="/js/admin-login.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head', { title: 'Track a request · CLIMS' }) %>
+  </head>
+  <body class="bg-bg text-ink font-sans antialiased min-h-screen">
+    <main class="min-h-screen flex flex-col">
+      <%- include('partials/public-header') %>
+
+      <div class="flex-1 max-w-2xl mx-auto w-full px-6 py-12">
+        <div class="animate-fade-up">
+          <h1 class="text-3xl font-bold tracking-tight text-ink mb-2">Track a request</h1>
+          <p class="text-ink-muted text-[15px] mb-8 max-w-md leading-relaxed">
+            Lost your confirmation link? Enter the email you submitted with and your reference
+            code (e.g. <span class="font-mono">CR-123456</span>) to look up its current status.
+          </p>
+        </div>
+
+        <form id="track-form" class="panel p-6 sm:p-8 space-y-6 animate-fade-up" style="animation-delay:0.08s" novalidate>
+          <div>
+            <label class="field-label" for="email"><%- icon('mail', 'w-4 h-4 text-ink-muted') %> Email <span class="text-danger">*</span></label>
+            <input id="email" name="email" type="email" required class="text-input" placeholder="you@company.com" />
+          </div>
+          <div>
+            <label class="field-label" for="refCode"><%- icon('file-text', 'w-4 h-4 text-ink-muted') %> Reference code <span class="text-danger">*</span></label>
+            <input id="refCode" name="refCode" required class="text-input font-mono" placeholder="CR-123456" />
+          </div>
+
+          <div class="hidden flex items-center gap-2 bg-danger-bg text-danger text-sm rounded-lg px-3 py-2.5" id="track-error" role="alert">
+            <%- icon('alert-triangle', 'w-4 h-4 shrink-0') %><span id="track-error-text"></span>
+          </div>
+
+          <button type="submit" id="track-btn" class="btn-primary btn-shine w-full">
+            <span id="track-btn-text">Find my request</span>
+          </button>
+        </form>
+      </div>
+    </main>
+    <script src="/js/track.js" defer></script>
+  </body>
+</html>

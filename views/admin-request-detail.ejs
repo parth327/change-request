@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head', { title: `${request.refCode} · CLIMS Admin` }) %>
+  </head>
+  <body class="bg-bg text-ink font-sans antialiased min-h-screen">
+    <div class="min-h-screen flex flex-col">
+      <%- include('partials/admin-header', { active: 'requests' }) %>
+
+      <div class="flex-1 max-w-5xl mx-auto w-full px-6 py-10">
+        <a href="/admin" class="inline-flex items-center gap-1.5 text-sm text-accent-ink hover:underline font-medium"><%- icon('arrow-left', 'w-4 h-4') %> All requests</a>
+
+        <div class="flex items-center justify-between mt-3 mb-6 flex-wrap gap-2">
+          <h1 class="text-2xl font-bold tracking-tight text-ink"><%= request.refCode %></h1>
+          <%- include('partials/status-badge', { status: request.status }) %>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-6">
+          <div class="panel p-6 sm:p-8">
+            <h2 class="text-sm font-semibold text-ink-muted mb-4 flex items-center gap-1.5"><%- icon('file-text', 'w-4 h-4') %> Submission</h2>
+            <dl class="space-y-4 text-sm">
+              <div>
+                <dt class="text-ink-muted flex items-center gap-1.5 mb-1"><%- icon('mail', 'w-3.5 h-3.5') %> Submitter</dt>
+                <dd class="text-ink"><%= request.submitterEmail %></dd>
+              </div>
+              <div>
+                <dt class="text-ink-muted flex items-center gap-1.5 mb-1"><%- icon('calendar', 'w-3.5 h-3.5') %> Date of change</dt>
+                <dd class="text-ink"><%= formatDate(request.changeDate) %></dd>
+              </div>
+              <div>
+                <dt class="text-ink-muted mb-1">Description</dt>
+                <dd class="text-ink whitespace-pre-wrap bg-bg rounded-lg px-3 py-2"><%= request.description %></dd>
+              </div>
+              <% if (request.reason) { %>
+              <div>
+                <dt class="text-ink-muted mb-1">Reason</dt>
+                <dd class="text-ink whitespace-pre-wrap bg-bg rounded-lg px-3 py-2"><%= request.reason %></dd>
+              </div>
+              <% } %>
+              <div>
+                <dt class="text-ink-muted flex items-center gap-1.5 mb-1"><%- icon('clock', 'w-3.5 h-3.5') %> Submitted</dt>
+                <dd class="text-ink"><%= formatDateTime(request.createdAt) %></dd>
+              </div>
+              <div>
+                <dt class="text-ink-muted flex items-center gap-1.5 mb-1"><%- icon('sliders', 'w-3.5 h-3.5') %> Approval mode</dt>
+                <dd class="text-ink capitalize"><%= request.approvalMode.toLowerCase() %></dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="panel p-6 sm:p-8">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-sm font-semibold text-ink-muted flex items-center gap-1.5"><%- icon('users', 'w-4 h-4') %> Approvals</h2>
+              <% if (request.status === 'PENDING' && request.approvals.some(a => a.status === 'NOTIFIED')) { %>
+              <button id="resend-btn" data-id="<%= request.id %>" class="btn-ghost text-accent-ink">
+                <%- icon('refresh', 'w-3.5 h-3.5') %> Resend notification
+              </button>
+              <% } %>
+            </div>
+            <p id="resend-status" class="hidden flex items-center gap-1.5 text-xs text-success mb-3"></p>
+            <ul class="space-y-4">
+              <% request.approvals.forEach(function(a) { %>
+              <li class="border-b border-line last:border-0 pb-4 last:pb-0">
+                <div class="flex items-center justify-between gap-2">
+                  <div class="min-w-0">
+                    <p class="text-ink text-sm font-medium truncate"><%= a.recipient.name %></p>
+                    <p class="text-ink-muted text-xs truncate">
+                      <%= a.recipient.email %><% if (request.approvalMode === 'HIERARCHICAL') { %> &middot; Level
+                      <%= a.level %><% } %>
+                    </p>
+                  </div>
+                  <div class="shrink-0"><%- include('partials/status-badge', { status: a.status }) %></div>
+                </div>
+                <% if (a.comment) { %>
+                <div class="mt-2 bg-bg rounded-lg px-3 py-2 text-sm text-ink flex items-start gap-1.5">
+                  <%- icon('message-square', 'w-3.5 h-3.5 text-ink-muted mt-0.5 shrink-0') %><span><%= a.comment %></span>
+                </div>
+                <% } %> <% if (a.decidedAt) { %>
+                <p class="text-xs text-ink-muted mt-1">Decided <%= formatDateTime(a.decidedAt) %></p>
+                <% } %>
+              </li>
+              <% }) %>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="/js/admin.js" defer></script>
+    <script src="/js/admin-request-detail.js" defer></script>
+  </body>
+</html>

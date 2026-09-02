@@ -1,0 +1,32 @@
+<header class="bg-brand-gradient shadow-header relative overflow-hidden sticky top-0 z-30">
+  <div class="absolute inset-0 bg-hero-glow pointer-events-none"></div>
+  <div class="max-w-5xl mx-auto px-6 py-3.5 flex items-center justify-between gap-4 flex-wrap relative">
+    <div class="flex items-center gap-6 flex-wrap">
+      <a href="/admin" class="flex items-center gap-2.5 shrink-0">
+        <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-gradient shadow-glow">
+          <%- icon('shield-check', 'w-4 h-4 text-white') %>
+        </span>
+        <span class="text-bg text-sm font-semibold tracking-tight">CLIMS <span class="text-bg/50 font-normal">Admin</span></span>
+      </a>
+      <nav class="flex items-center gap-1 text-sm">
+        <a href="/admin" class="nav-pill <%= active === 'requests' ? 'bg-white/10 text-bg' : 'text-bg/65 hover:text-bg hover:bg-white/5' %>">
+          <%- icon('layout-grid', 'w-4 h-4') %> Requests
+        </a>
+        <a href="/admin/recipients" class="nav-pill <%= active === 'recipients' ? 'bg-white/10 text-bg' : 'text-bg/65 hover:text-bg hover:bg-white/5' %>">
+          <%- icon('users', 'w-4 h-4') %> Recipients
+        </a>
+        <a href="/admin/settings" class="nav-pill <%= active === 'settings' ? 'bg-white/10 text-bg' : 'text-bg/65 hover:text-bg hover:bg-white/5' %>">
+          <%- icon('sliders', 'w-4 h-4') %> Settings
+        </a>
+      </nav>
+    </div>
+    <div class="flex items-center gap-1">
+      <a href="/" class="nav-pill text-bg/65 hover:text-bg hover:bg-white/5" target="_blank" rel="noopener">
+        <%- icon('home', 'w-4 h-4') %> Main site
+      </a>
+      <button id="logout-btn" class="nav-pill text-bg/65 hover:text-bg hover:bg-white/5">
+        <%- icon('log-out', 'w-4 h-4') %> Sign out
+      </button>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head', { title: 'Submit a change request · CLIMS' }) %>
+  </head>
+  <body class="bg-bg text-ink font-sans antialiased min-h-screen">
+    <main class="min-h-screen flex flex-col">
+      <%- include('partials/public-header') %>
+
+      <div class="flex-1 max-w-2xl mx-auto w-full px-6 py-12">
+        <div class="animate-fade-up">
+          <div class="inline-flex items-center gap-1.5 rounded-full bg-accent-soft text-accent-ink text-xs font-medium px-3 py-1 mb-4">
+            <%- icon('sparkle', 'w-3.5 h-3.5') %> New request
+          </div>
+          <h1 class="text-3xl font-bold tracking-tight text-ink mb-2">Submit a change request</h1>
+          <p class="text-ink-muted text-[15px] mb-8 max-w-md leading-relaxed">
+            Describe the change you're proposing. Your request will be routed for approval, and
+            you'll get an email once a decision is made.
+          </p>
+        </div>
+
+        <form id="request-form" class="panel p-6 sm:p-8 space-y-6 animate-fade-up" style="animation-delay:0.08s" novalidate>
+          <div>
+            <label class="field-label" for="email"><%- icon('mail', 'w-4 h-4 text-ink-muted') %> Email <span class="text-danger">*</span></label>
+            <input id="email" name="email" type="email" required class="text-input" placeholder="you@company.com" />
+            <p class="field-error hidden" id="email-error"></p>
+          </div>
+
+          <div>
+            <label class="field-label" for="changeDate"><%- icon('calendar', 'w-4 h-4 text-ink-muted') %> Date <span class="text-danger">*</span></label>
+            <input id="changeDate" name="changeDate" type="date" required class="text-input max-w-[220px]" />
+            <p class="field-error hidden" id="changeDate-error"></p>
+          </div>
+
+          <div>
+            <label class="field-label" for="description"
+              ><%- icon('file-text', 'w-4 h-4 text-ink-muted') %> Description of proposed change <span class="text-danger">*</span></label
+            >
+            <textarea
+              id="description"
+              name="description"
+              required
+              rows="4"
+              class="text-input resize-y"
+              placeholder="What are you proposing to change?"
+            ></textarea>
+            <p class="field-error hidden" id="description-error"></p>
+          </div>
+
+          <div>
+            <label class="field-label" for="reason"><%- icon('message-square', 'w-4 h-4 text-ink-muted') %> Reason for change</label>
+            <textarea
+              id="reason"
+              name="reason"
+              rows="3"
+              class="text-input resize-y"
+              placeholder="Optional — why is this change needed?"
+            ></textarea>
+            <p class="field-hint">Optional</p>
+          </div>
+
+          <div class="hidden flex items-center gap-2 bg-danger-bg text-danger text-sm rounded-lg px-3 py-2.5" id="form-error" role="alert">
+            <%- icon('alert-triangle', 'w-4 h-4 shrink-0') %><span id="form-error-text"></span>
+          </div>
+
+          <div class="pt-2 flex items-center justify-between gap-4">
+            <p class="text-xs text-ink-muted"><span class="text-danger">*</span> Required</p>
+            <button type="submit" id="submit-btn" class="btn-primary btn-shine">
+              <span id="submit-btn-text">Submit request</span>
+            </button>
+          </div>
+        </form>
+
+        <div class="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-xs text-ink-muted animate-fade-up" style="animation-delay:0.16s">
+          <span class="flex items-center gap-1.5"><%- icon('shield-check', 'w-3.5 h-3.5 text-accent-ink') %> Routed for approval</span>
+          <span class="flex items-center gap-1.5"><%- icon('mail', 'w-3.5 h-3.5 text-accent-ink') %> Email notifications</span>
+          <a href="/track" class="flex items-center gap-1.5 hover:text-accent-ink hover:underline"><%- icon('clock', 'w-3.5 h-3.5 text-accent-ink') %> Already submitted? Track its status</a>
+        </div>
+      </div>
+    </main>
+    <script src="/js/form.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head', { title: 'Settings · CLIMS Admin' }) %>
+  </head>
+  <body class="bg-bg text-ink font-sans antialiased min-h-screen">
+    <div class="min-h-screen flex flex-col">
+      <%- include('partials/admin-header', { active: 'settings' }) %>
+
+      <div class="flex-1 max-w-5xl mx-auto w-full px-6 py-10">
+        <h1 class="text-2xl font-bold tracking-tight text-ink mb-2">Settings</h1>
+        <p class="text-ink-muted text-[15px] mb-8 max-w-lg">
+          This controls how every new request is routed. Requests already in progress keep the
+          mode they were submitted under.
+        </p>
+
+        <div class="grid sm:grid-cols-2 gap-4 max-w-2xl" id="mode-options">
+          <button
+            data-mode="SINGLE"
+            class="mode-btn panel-interactive text-left p-6 relative <%= settings.approvalMode === 'SINGLE' ? 'border-accent ring-2 ring-accent/25' : '' %>"
+          >
+            <span class="selected-check absolute top-4 right-4 text-accent-ink <%= settings.approvalMode === 'SINGLE' ? '' : 'hidden' %>"><%- icon('check-circle', 'w-5 h-5') %></span>
+            <span class="stat-icon bg-accent-soft text-accent-ink mb-3"><%- icon('users', 'w-5 h-5') %></span>
+            <p class="font-semibold text-ink mb-1">Single approval</p>
+            <p class="text-sm text-ink-muted leading-relaxed">
+              Every active recipient is notified at once. Whichever recipient decides first —
+              approve or reject — finalizes the request.
+            </p>
+          </button>
+
+          <button
+            data-mode="HIERARCHICAL"
+            class="mode-btn panel-interactive text-left p-6 relative <%= settings.approvalMode === 'HIERARCHICAL' ? 'border-accent ring-2 ring-accent/25' : '' %>"
+          >
+            <span class="selected-check absolute top-4 right-4 text-accent-ink <%= settings.approvalMode === 'HIERARCHICAL' ? '' : 'hidden' %>"><%- icon('check-circle', 'w-5 h-5') %></span>
+            <span class="stat-icon bg-accent-soft text-accent-ink mb-3"><%- icon('trending-up', 'w-5 h-5') %></span>
+            <p class="font-semibold text-ink mb-1">Hierarchical approval</p>
+            <p class="text-sm text-ink-muted leading-relaxed">
+              Recipients decide in level order. Everyone at a level must approve before the next
+              level is notified. A rejection at any level ends the request.
+            </p>
+          </button>
+        </div>
+
+        <p id="saved-msg" class="hidden flex items-center gap-1.5 text-sm text-success mt-4"><%- icon('check-circle', 'w-4 h-4') %> <span id="saved-msg-text">Saved.</span></p>
+      </div>
+    </div>
+    <script src="/js/admin.js" defer></script>
+    <script src="/js/admin-settings.js" defer></script>
+  </body>
+</html>

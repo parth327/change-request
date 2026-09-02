@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head', { title: 'Review request · CLIMS' }) %>
+  </head>
+  <body class="bg-bg text-ink font-sans antialiased min-h-screen">
+    <main class="min-h-screen flex flex-col">
+      <%- include('partials/public-header') %>
+
+      <div class="flex-1 max-w-2xl mx-auto w-full px-6 py-12">
+        <% if (!approval) { %>
+        <div class="panel p-8 text-center animate-fade-up">
+          <span class="flex h-12 w-12 items-center justify-center rounded-full bg-danger-bg text-danger mx-auto mb-4">
+            <%- icon('x-circle', 'w-6 h-6') %>
+          </span>
+          <h1 class="text-xl font-semibold mb-2">Link not valid</h1>
+          <p class="text-ink-muted text-[15px]">
+            This review link doesn't match any request. It may have been mistyped or the request
+            may no longer exist.
+          </p>
+        </div>
+        <% } else { %>
+        <div class="flex items-center justify-between mb-1 animate-fade-up">
+          <h1 class="text-2xl font-bold tracking-tight text-ink"><%= approval.request.refCode %></h1>
+          <%- include('partials/status-badge', { status: approval.request.status }) %>
+        </div>
+        <p class="text-ink-muted text-sm mb-6 flex items-center gap-1.5 animate-fade-up"><%- icon('mail', 'w-3.5 h-3.5') %> Submitted by <%= approval.request.submitterEmail %></p>
+
+        <div class="panel p-6 sm:p-8 space-y-4 mb-6 animate-fade-up" style="animation-delay:0.05s">
+          <dl class="grid grid-cols-3 gap-y-3 text-sm">
+            <dt class="text-ink-muted flex items-center gap-1.5"><%- icon('calendar', 'w-4 h-4') %> Date of change</dt>
+            <dd class="col-span-2 text-ink"><%= formatDate(approval.request.changeDate) %></dd>
+            <dt class="text-ink-muted flex items-center gap-1.5"><%- icon('file-text', 'w-4 h-4') %> Description</dt>
+            <dd class="col-span-2 text-ink whitespace-pre-wrap"><%= approval.request.description %></dd>
+            <% if (approval.request.reason) { %>
+            <dt class="text-ink-muted flex items-center gap-1.5"><%- icon('message-square', 'w-4 h-4') %> Reason</dt>
+            <dd class="col-span-2 text-ink whitespace-pre-wrap"><%= approval.request.reason %></dd>
+            <% } %>
+          </dl>
+        </div>
+
+        <% if (approval.request.status !== 'PENDING' || approval.status === 'APPROVED' || approval.status ===
+        'REJECTED') { %>
+        <div class="panel p-6 sm:p-8 animate-fade-up" style="animation-delay:0.1s">
+          <p class="text-[15px] text-ink">
+            This request has already been marked <strong><%= approval.request.status.toLowerCase() %></strong>.
+            No further action is needed.
+          </p>
+          <% if (approval.comment) { %>
+          <div class="mt-4 bg-bg rounded-lg px-4 py-3 text-sm text-ink">
+            <span class="text-ink-muted">Your comment: </span><%= approval.comment %>
+          </div>
+          <% } %>
+        </div>
+        <% } else if (approval.status === 'SKIPPED') { %>
+        <div class="panel p-6 sm:p-8 animate-fade-up" style="animation-delay:0.1s">
+          <p class="text-[15px] text-ink">
+            This request was resolved by another approver, so no action is needed from you.
+          </p>
+        </div>
+        <% } else { %>
+        <div class="panel p-6 sm:p-8 space-y-5 animate-fade-up" style="animation-delay:0.1s" id="review-form" data-token="<%= token %>">
+          <div>
+            <label class="field-label" for="comment"><%- icon('message-square', 'w-4 h-4 text-ink-muted') %> Comment</label>
+            <textarea
+              id="comment"
+              rows="3"
+              class="text-input resize-y"
+              placeholder="Optional for approval, recommended for rejection"
+            ></textarea>
+          </div>
+          <div class="hidden flex items-center gap-2 bg-danger-bg text-danger text-sm rounded-lg px-3 py-2.5" id="review-error" role="alert">
+            <%- icon('alert-triangle', 'w-4 h-4 shrink-0') %><span id="review-error-text"></span>
+          </div>
+          <div class="hidden flex items-center gap-2 text-[15px] text-ink" id="review-result">
+            <%- icon('check-circle', 'w-5 h-5 text-success shrink-0') %><span id="review-result-text"></span>
+          </div>
+          <div class="flex gap-3" id="review-actions">
+            <button type="button" id="approve-btn" class="btn-success"><%- icon('check-circle', 'w-4 h-4') %> Approve</button>
+            <button type="button" id="reject-btn" class="btn-danger"><%- icon('x-circle', 'w-4 h-4') %> Reject</button>
+          </div>
+        </div>
+        <% } %> <% } %>
+      </div>
+    </main>
+    <% if (approval && approval.request.status === 'PENDING' && approval.status !== 'APPROVED' && approval.status
+    !== 'REJECTED' && approval.status !== 'SKIPPED') { %>
+    <script src="/js/review.js" defer></script>
+    <% } %>
+  </body>
+</html>

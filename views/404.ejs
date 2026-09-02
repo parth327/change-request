@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head', { title: 'Page not found · CLIMS' }) %>
+  </head>
+  <body class="bg-bg text-ink font-sans antialiased min-h-screen">
+    <main class="min-h-screen flex items-center justify-center px-6">
+      <div class="text-center max-w-sm animate-fade-up">
+        <span class="flex h-14 w-14 items-center justify-center rounded-full bg-pending-bg text-pending mx-auto mb-5">
+          <%- icon('search', 'w-7 h-7') %>
+        </span>
+        <p class="text-ink-muted text-sm mb-2">404</p>
+        <h1 class="text-xl font-semibold text-ink mb-3">Page not found</h1>
+        <p class="text-ink-muted text-[15px] mb-6"><%= path %> doesn't exist, or the link may be out of date.</p>
+        <a href="/" class="btn-secondary inline-flex"><%- icon('arrow-left', 'w-4 h-4') %> Go to the form</a>
+      </div>
+    </main>
+  </body>
+</html>

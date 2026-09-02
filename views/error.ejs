@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head', { title: 'Something went wrong · CLIMS' }) %>
+  </head>
+  <body class="bg-bg text-ink font-sans antialiased min-h-screen">
+    <main class="min-h-screen flex items-center justify-center px-6">
+      <div class="text-center max-w-sm animate-fade-up">
+        <span class="flex h-14 w-14 items-center justify-center rounded-full bg-danger-bg text-danger mx-auto mb-5">
+          <%- icon('alert-triangle', 'w-7 h-7') %>
+        </span>
+        <p class="text-ink-muted text-sm mb-2">Error</p>
+        <h1 class="text-xl font-semibold text-ink mb-3">Something went wrong</h1>
+        <p class="text-ink-muted text-[15px] mb-6"><%= message %></p>
+        <a href="/" class="btn-secondary inline-flex"><%- icon('arrow-left', 'w-4 h-4') %> Go to the form</a>
+      </div>
+    </main>
+  </body>
+</html>

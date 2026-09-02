@@ -1,0 +1,11 @@
+<%
+  const badgeMap = {
+    PENDING: { label: "Pending", cls: "badge-pending", ic: "clock" },
+    NOTIFIED: { label: "Pending", cls: "badge-pending", ic: "clock" },
+    APPROVED: { label: "Approved", cls: "badge-approved", ic: "check-circle" },
+    REJECTED: { label: "Rejected", cls: "badge-rejected", ic: "x-circle" },
+    SKIPPED: { label: "Not required", cls: "badge-pending", ic: "clock" }
+  };
+  const entry = badgeMap[status] || { label: status, cls: "badge-pending", ic: "clock" };
+%>
+<span class="<%= entry.cls %>"><%- icon(entry.ic, 'w-3.5 h-3.5') %><%= entry.label %></span>

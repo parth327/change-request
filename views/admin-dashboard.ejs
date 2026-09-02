@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head', { title: 'Requests · CLIMS Admin' }) %>
+  </head>
+  <body class="bg-bg text-ink font-sans antialiased min-h-screen">
+    <div class="min-h-screen flex flex-col">
+      <%- include('partials/admin-header', { active: 'requests' }) %>
+
+      <div class="flex-1 max-w-5xl mx-auto w-full px-6 py-10">
+        <div class="flex items-center justify-between mb-6 flex-wrap gap-3 animate-fade-up">
+          <div>
+            <h1 class="text-2xl font-bold tracking-tight text-ink">Requests</h1>
+            <p class="text-ink-muted text-sm mt-0.5">Every change request submitted through the portal.</p>
+          </div>
+          <a href="/api/admin/export" class="btn-secondary text-sm"><%- icon('download', 'w-4 h-4') %> Export CSV</a>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+          <div class="stat-card animate-fade-up" style="animation-delay:0.04s">
+            <span class="stat-icon bg-ink/5 text-ink"><%- icon('inbox', 'w-5 h-5') %></span>
+            <div>
+              <p class="text-2xl font-bold text-ink leading-none" data-count-to="<%= counts.total %>">0</p>
+              <p class="text-xs text-ink-muted mt-1">Total</p>
+            </div>
+          </div>
+          <div class="stat-card animate-fade-up" style="animation-delay:0.08s">
+            <span class="stat-icon bg-pending-bg text-pending"><%- icon('clock', 'w-5 h-5') %></span>
+            <div>
+              <p class="text-2xl font-bold text-ink leading-none" data-count-to="<%= counts.pending %>">0</p>
+              <p class="text-xs text-ink-muted mt-1">Pending</p>
+            </div>
+          </div>
+          <div class="stat-card animate-fade-up" style="animation-delay:0.12s">
+            <span class="stat-icon bg-success-bg text-success"><%- icon('check-circle', 'w-5 h-5') %></span>
+            <div>
+              <p class="text-2xl font-bold text-ink leading-none" data-count-to="<%= counts.approved %>">0</p>
+              <p class="text-xs text-ink-muted mt-1">Approved</p>
+            </div>
+          </div>
+          <div class="stat-card animate-fade-up" style="animation-delay:0.16s">
+            <span class="stat-icon bg-danger-bg text-danger"><%- icon('x-circle', 'w-5 h-5') %></span>
+            <div>
+              <p class="text-2xl font-bold text-ink leading-none" data-count-to="<%= counts.rejected %>">0</p>
+              <p class="text-xs text-ink-muted mt-1">Rejected</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between mb-4 gap-4 flex-wrap animate-fade-up" style="animation-delay:0.2s">
+          <div class="flex gap-1" id="status-tabs">
+            <button data-status="" class="nav-pill bg-ink text-bg">All</button>
+            <button data-status="PENDING" class="nav-pill text-ink-muted hover:bg-pending-bg">
+              <%- icon('clock', 'w-3.5 h-3.5') %> Pending
+            </button>
+            <button data-status="APPROVED" class="nav-pill text-ink-muted hover:bg-success-bg">
+              <%- icon('check-circle', 'w-3.5 h-3.5') %> Approved
+            </button>
+            <button data-status="REJECTED" class="nav-pill text-ink-muted hover:bg-danger-bg">
+              <%- icon('x-circle', 'w-3.5 h-3.5') %> Rejected
+            </button>
+          </div>
+          <div class="relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted pointer-events-none"><%- icon('search', 'w-4 h-4') %></span>
+            <input
+              id="search-input"
+              placeholder="Search reference, email, or description"
+              class="text-input max-w-xs pl-9"
+            />
+          </div>
+        </div>
+
+        <div class="panel overflow-hidden animate-fade-up" style="animation-delay:0.24s">
+          <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-line text-left text-ink-muted bg-bg/60">
+                <th class="px-4 py-3 font-medium">Reference</th>
+                <th class="px-4 py-3 font-medium">Submitter</th>
+                <th class="px-4 py-3 font-medium">Date of change</th>
+                <th class="px-4 py-3 font-medium">Submitted</th>
+                <th class="px-4 py-3 font-medium">Approvers</th>
+                <th class="px-4 py-3 font-medium">Status</th>
+              </tr>
+            </thead>
+            <tbody id="requests-tbody" class="transition-opacity duration-200">
+              <% if (requests.length === 0) { %>
+              <tr>
+                <td colspan="6">
+                  <div class="empty-state">
+                    <span class="flex h-12 w-12 items-center justify-center rounded-full bg-bg text-ink-muted"><%- icon('inbox', 'w-6 h-6') %></span>
+                    <p class="text-ink-muted text-sm">No requests yet. They'll show up here as soon as someone submits the form.</p>
+                  </div>
+                </td>
+              </tr>
+              <% } %> <% requests.forEach(function(r) { %>
+              <tr class="table-row">
+                <td class="px-4 py-3">
+                  <a href="/admin/requests/<%= r.id %>" class="text-accent-ink font-medium hover:underline"
+                    ><%= r.refCode %></a
+                  >
+                  <p class="text-ink-muted text-xs mt-0.5 max-w-[220px] truncate" title="<%= r.description %>"><%= r.description %></p>
+                </td>
+                <td class="px-4 py-3 text-ink"><%= r.submitterEmail %></td>
+                <td class="px-4 py-3 text-ink"><%= formatDate(r.changeDate) %></td>
+                <td class="px-4 py-3 text-ink-muted">
+                  <%= formatDateTime(r.createdAt) %>
+                  <% if (r.status === 'PENDING' && daysSince(r.createdAt) >= 3) { %>
+                  <span class="text-accent-ink inline-flex items-center gap-1"> &middot; <span class="h-1.5 w-1.5 rounded-full bg-accent animate-pulse"></span> <%= daysSince(r.createdAt) %>d pending</span>
+                  <% } %>
+                </td>
+                <td class="px-4 py-3">
+                  <div class="space-y-1.5 min-w-[180px] max-w-[260px]">
+                    <% r.approvals.slice().sort((a,b) => a.level - b.level).forEach(function(a) {
+                      const label = { PENDING: "Pending", NOTIFIED: "Pending", APPROVED: "Approved", REJECTED: "Rejected", SKIPPED: "Not required" }[a.status] || a.status;
+                      const colorCls = { PENDING: "text-pending", NOTIFIED: "text-pending", APPROVED: "text-success", REJECTED: "text-danger", SKIPPED: "text-ink-muted" }[a.status] || "text-pending";
+                      const dotCls = { PENDING: "bg-pending", NOTIFIED: "bg-pending", APPROVED: "bg-success", REJECTED: "bg-danger", SKIPPED: "bg-line" }[a.status] || "bg-pending";
+                    %>
+                    <div class="text-xs leading-snug">
+                      <span class="inline-block h-1.5 w-1.5 rounded-full <%= dotCls %> mr-1"></span
+                      ><span class="text-ink font-medium"><%= a.recipient.name %></span>
+                      <span class="<%= colorCls %>">&middot; <%= label %></span>
+                      <% if (a.comment) { %>
+                      <p class="text-ink-muted italic truncate pl-2.5" title="<%= a.comment %>">"<%= a.comment %>"</p>
+                      <% } %>
+                    </div>
+                    <% }) %>
+                  </div>
+                </td>
+                <td class="px-4 py-3"><%- include('partials/status-badge', { status: r.status }) %></td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+          </div>
+          <div class="flex items-center justify-between px-4 py-3 border-t border-line text-sm <%= counts.total <= pageSize ? 'hidden' : '' %>" id="pagination">
+            <p class="text-ink-muted" id="pagination-summary"></p>
+            <div class="flex items-center gap-2">
+              <button id="prev-page" class="btn-ghost" disabled><%- icon('chevron-left', 'w-4 h-4') %> Prev</button>
+              <button id="next-page" class="btn-ghost">Next <%- icon('chevron-right', 'w-4 h-4') %></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="/js/admin.js" defer></script>
+    <script>
+      window.__DASHBOARD_PAGE_SIZE__ = <%= pageSize %>;
+      window.__DASHBOARD_INITIAL_TOTAL__ = <%= counts.total %>;
+    </script>
+    <script src="/js/admin-dashboard.js" defer></script>
+  </body>
+</html>
