@@ -9,6 +9,7 @@
     "build:css": "tailwindcss -i ./src/styles/input.css -o ./public/css/styles.css --minify",
     "watch:css": "tailwindcss -i ./src/styles/input.css -o ./public/css/styles.css --watch",
     "postinstall": "prisma generate",
+    "vercel-build": "npm run build:css",
     "db:push": "prisma db push",
     "db:seed": "node prisma/seed.js",
     "db:studio": "prisma studio"

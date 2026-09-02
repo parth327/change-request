@@ -106,6 +106,36 @@ on templates.
    `NPM_CONFIG_PRODUCTION=false` in the service's environment or run
    `npm run db:push` once manually from Render's shell.
 
+## 4b. Deploying to Vercel instead
+
+This is a plain long-running Express server, not a Next.js app — Vercel can
+still run it (via its Node.js zero-config detection on `main` in
+`package.json`), but two things need to be set up manually that Render's
+buildpack handles automatically:
+
+1. **Environment variables** — Vercel doesn't read `.env` from the repo (it's
+   gitignored, as it should be). Add every variable from `.env` under
+   Project → Settings → Environment Variables: `DATABASE_URL`, `AUTH_SECRET`,
+   `BREVO_API_KEY`, `EMAIL_FROM_ADDRESS`, `EMAIL_FROM_NAME`, `ADMIN_EMAIL`,
+   `ADMIN_PASSWORD`, `ADMIN_NAME`, and `APP_ORIGIN` set to your Vercel URL.
+   Without these the app exits immediately on boot (see `config/env.js`).
+2. **CSS build** — the compiled stylesheet (`public/css/styles.css`) is
+   committed to the repo directly so it deploys as a static file no matter
+   what Vercel's build step does. The `vercel-build` script in
+   `package.json` also regenerates it from `src/styles/input.css` during
+   Vercel's build, so a redeploy after editing `views/*.ejs` or
+   `public/js/*.js` picks up style changes automatically — just remember to
+   run `npm run build:css` and commit the result if you ever deploy
+   somewhere that *doesn't* honor `vercel-build`.
+
+Note the automatic DB bootstrap (section 3) spawns `npx prisma db push` as a
+child process if tables are missing — this works fine against an
+already-provisioned database (the common case after the first deploy), but
+child-process spawning on a cold serverless invocation is inherently less
+reliable than Render's persistent process. If you ever point this at a
+brand-new, empty database on Vercel and boot fails, run `npm run db:push`
+once from your own machine against the same `DATABASE_URL` first.
+
 ## 5. How a request flows (unchanged from the Next.js version)
 
 1. Submission creates a `ChangeRequest` plus one `RequestApproval` per active
